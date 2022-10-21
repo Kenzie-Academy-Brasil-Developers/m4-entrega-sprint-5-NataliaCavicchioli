@@ -6,26 +6,32 @@ services:
     build: .
     ports:
       - 3000:3000
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=kimoveis
+      - HOST=db
+      - SECRET_KEY=secret_key
+
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - .:/app
+      - /app/node_modules/bcrypt/
 
   db:
     container_name: db
-    image: postgres:14-alpine
+    image: postgres:latest
     ports:
-      - 5431:5432
-    env_file:
-      - .env
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_DB=kimoveis
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d kimoveis"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 5s
-   
-
